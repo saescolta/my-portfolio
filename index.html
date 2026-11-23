@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Selena Co | Portfolio</title>
+<style>
+:root{
+  --ink:#1b1b1b;
+  --body:system-ui,'Segoe UI',sans-serif;
+  --ratio:1.778;   /* default only. Each page sets its own from its image */
+  --box:2.3cqw;    /* roundness of the picture boxes */
+  --boxcolor:#dac8d1;   /* colour of the picture boxes */
+}
+*{box-sizing:border-box;margin:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--body);color:var(--ink);background:#fff}
+:focus-visible{outline:3px solid #e33;outline-offset:2px}
+
+/* ===== ALL 8 PAGES SHARE ONE SIZE ===== */
+.page{height:100vh;display:grid;place-items:center;background:#fff}
+.shot{
+  position:relative;
+  width:min(100%, calc(100vh * var(--ratio)));
+  aspect-ratio:var(--ratio);
+  container-type:inline-size;      /* things inside scale with the page (cqw) */
+  line-height:0;
+}
+.shot > img{display:block;width:100%;height:100%;object-fit:cover}
+
+/* invisible click areas placed over what is already drawn in your images */
+.hit{position:absolute;transform:translate(-50%,-50%);display:block;border:0;padding:0;
+  background:none;border-radius:99px;cursor:pointer}
+.hit:hover{background:rgba(255,255,255,.25)}
+.debug .hit{outline:2px dashed red;background:rgba(255,0,0,.2)}   /* open index.html?debug=1 */
+.debug .gallery,.debug .video{outline:2px dashed lime}
+
+/* ===== PICTURE BOXES (sit exactly on the boxes drawn in your templates) ===== */
+.gallery,.video{
+  position:absolute;transform:translate(-50%,-50%);
+  width:38%;                       /* box width, % of the page */
+  aspect-ratio:981/784;            /* box shape */
+  border-radius:var(--box);overflow:hidden;line-height:1.4;
+  background:var(--boxcolor);
+}
+.no-box .gallery,.no-box .video{background:none}   /* set DRAW_BOXES = false in the script to use this */
+
+/* arrows drawn by the page (round, same size and place as in the template) */
+.draw-arrows .arrow{background:#f6f6f6;border:1px solid #d8d9dd;border-radius:50%}
+.draw-arrows .arrow:hover{background:#fff}
+.draw-arrows .arrow::after{content:'';position:absolute;left:50%;top:50%;width:.65cqw;height:.65cqw;
+  border:solid #3f3f3f;border-width:0 0 .18cqw .18cqw}
+.draw-arrows .arrow.prev::after{transform:translate(-25%,-50%) rotate(45deg)}
+.draw-arrows .arrow.next::after{border-width:.18cqw .18cqw 0 0;transform:translate(-75%,-50%) rotate(45deg)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+.slide{position:absolute;inset:1.2cqw;opacity:0;transition:opacity .35s;pointer-events:none}
+.slide.on{opacity:1;pointer-events:auto}
+.slide img,.slide video,.slide iframe{width:100%;height:100%;object-fit:contain;display:block;border:0}   /* whole picture / video, never cropped */
+.slide video,.slide iframe{background:#000;border-radius:1cqw}
+.ph{width:100%;height:100%;display:grid;place-items:center;text-align:center;color:#56606e;
+  font-size:max(.65rem,1cqw);padding:1rem}
+.count{position:absolute;top:.8cqw;right:1.2cqw;font-size:max(.6rem,.9cqw);color:#fff;background:#0007;
+  padding:.1em .6em;border-radius:99px;line-height:1.4;z-index:2}
+.video video,.video iframe{width:100%;height:100%;border:0;background:#000;object-fit:contain;display:block}
+
+/* See All pop-up */
+.pill{font:500 .8rem var(--body);border:1px solid #bbb;background:#fff;border-radius:99px;padding:.45rem 1.1rem;cursor:pointer;color:var(--ink)}
+dialog{border:0;border-radius:14px;width:min(960px,94vw);max-height:90vh;padding:1.5rem;background:#fff;color:var(--ink)}
+dialog::backdrop{background:#000a}
+dialog header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
+dialog h3{font-size:1.4rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.8rem}
+.grid img,.grid .ph{aspect-ratio:1;width:100%;object-fit:contain;background:#f2f2f2;border-radius:8px}
+.grid video,.grid iframe{aspect-ratio:1;width:100%;border:0;border-radius:8px;background:#000;object-fit:contain}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<!-- ===== THE 8 PAGES =====
+  .hit     = invisible button over the one drawn in the image.
+             left/top = its center, width/height = its size, all in % of the page.
+  .gallery = the carousel. data-x / data-y = center of the box in the image (%),
+             data-prev / data-next = the drawn arrows (x,y), data-see = the drawn "See All" (x,y).
+  data-footer = invisible Instagram / Email / Phone links over the footer text in the image. -->
+
+<section class="page" id="page1">
+  <div class="shot">
+    <img src="images/page1.jpg" alt="Portfolio by Selena Co">
+    <a class="hit" href="#page2" aria-label="View more" style="left:49.9%; top:80.3%; width:14%; height:6.6%"></a>
+  </div>
+</section>
+
+<section class="page" id="page2">
+  <div class="shot">
+    <img src="images/page2.jpg" alt="About me">
+    <a class="hit" href="#page3" aria-label="View more" style="left:91.3%; top:94.4%; width:14%; height:6.6%"></a>
+  </div>
+</section>
+
+<section class="page" id="page3">
+  <div class="shot" data-footer="about">
+    <img src="images/page3.jpg" alt="About me and selected experience">
+    <a class="hit" href="#page4" aria-label="My works" style="left:46.7%; top:86.7%; width:13.6%; height:7.2%"></a>
+  </div>
+</section>
+
+<section class="page" id="page4">
+  <div class="shot" data-footer="work">
+    <img src="images/page4.jpg" alt="Posters and editorial mockups">
+    <div class="gallery" data-title="Posters" data-key="posters" data-x="26.2" data-y="51.2" data-prev="7.14,51.24" data-next="45.38,51.28" data-see="24.4,82.1"></div>
+    <div class="gallery" data-title="Editorial Mockups" data-key="editorial" data-x="72.1" data-y="51.2" data-prev="52.95,51.24" data-next="91.19,51.24" data-see="72.05,82.1"></div>
+    <a class="hit" href="#page5" aria-label="My works" style="left:49.1%; top:87.5%; width:12%; height:5.6%"></a>
+  </div>
+</section>
+
+<section class="page" id="page5">
+  <div class="shot" data-footer="work">
+    <img src="images/page5.jpg" alt="Pubmats and digital art">
+    <div class="gallery" data-title="Pubmats" data-key="pubmats" data-x="26.2" data-y="51.2" data-prev="7.14,51.24" data-next="45.38,51.28" data-see="25.4,82.1"></div>
+    <div class="gallery" data-title="Digital Art" data-key="digital" data-x="72" data-y="51.2" data-prev="53.22,51.24" data-next="91.46,51.24" data-see="72.05,82.1"></div>
+    <a class="hit" href="#page6" aria-label="My works" style="left:49.1%; top:87.5%; width:12%; height:5.6%"></a>
+  </div>
+</section>
+
+<section class="page" id="page6">
+  <div class="shot" data-footer="work">
+    <img src="images/page6.jpg" alt="3D modelling and traditional art">
+    <div class="gallery" data-title="3D Modelling" data-key="3d" data-x="26.86" data-y="48.4" data-prev="7.84,48.34" data-next="46.04,48.41" data-see="26.86,79.2"></div>
+    <div class="gallery" data-title="Trad Art" data-key="trad" data-x="72.75" data-y="48.4" data-prev="53.92,48.34" data-next="92.12,48.34" data-see="72.71,79.2"></div>
+    <a class="hit" href="#page7" aria-label="My works" style="left:50%; top:86.7%; width:12%; height:5.6%"></a>
+  </div>
+</section>
+
+<section class="page" id="page7">
+  <div class="shot" data-footer="work">
+    <img src="images/page7.jpg" alt="Photography and audio engineering">
+    <div class="gallery" data-title="Photography" data-key="photo" data-x="26.05" data-y="47.1" data-prev="7.38,45.79" data-next="45.11,45.79" data-see="26.03,79.4"></div>
+    <div class="gallery" data-title="Audio Engineering" data-key="audio" data-x="73.84" data-y="47.1" data-prev="54.77,45.79" data-next="92.49,45.79" data-see="73.93,79.4"></div>
+    <a class="hit" href="#page8" aria-label="My works" style="left:50%; top:86.7%; width:12%; height:5.6%"></a>
+  </div>
+</section>
+
+<section class="page" id="page8">
+  <div class="shot" data-footer="work">
+    <img src="images/page8.jpg" alt="Video editing">
+    <div class="video" id="video" style="left:50%; top:51.7%"></div>
+    <a class="hit" href="#page3" aria-label="Back to About Me" style="left:50%; top:87.5%; width:12%; height:5.6%"></a>
+  </div>
+</section>
+
+<dialog id="all" aria-labelledby="allTitle">
+  <header><h3 id="allTitle"></h3><button class="pill" id="close">Close</button></header>
+  <div class="grid" id="grid"></div>
+</dialog>
+
+<script>
+
+const GALLERIES = {
+  posters:   ['images/posters/1.jpg','images/posters/2.jpg','images/posters/3_1.png', 'images/posters/4_1.png', 'images/posters/5_1.png', 'images/posters/6.jfif', 'images/posters/7.jfif', 'images/posters/8.jfif','images/posters/9.jfif','images/posters/10.jfif', 'images/posters/11.jfif', 'images/posters/12.jfif', 'images/posters/13.jfif'],
+  editorial: ['images/editorial/editorial1.jfif','images/editorial/editorial2.jfif','images/editorial/editorial3.jfif', 'images/editorial/editorial4.jfif', 'images/editorial/editorial5.png'],
+  pubmats:   ['images/pubmats/pubmat1.jpg','images/pubmats/pubmat2.png','images/pubmats/pubmat3.jfif','images/pubmats/pubmat4.png', 'images/pubmats/pubmat5.png', 'images/pubmats/pubmat6.png','images/pubmats/pubmat7.png', 'images/pubmats/pubmat8.png', 'images/pubmats/pubmat9.png', 'images/pubmats/pubmat10.png', 'images/pubmats/pubmat11.png'],
+  digital:   ['images/digital/digital1.jpg','images/digital/digital2.jpg','images/digital/digital3.jpg','images/digital/digital4.jpg', 'images/digital/digital5.jpg', 'images/digital/digital6.jpg', 'images/digital/digital7.jpg','images/digital/digital8.jpg','images/digital/digital9.jpg'],
+  '3d':      ['images/3d/3d1.jfif','images/3d/3d2.jfif','images/3d/3d3.jfif', 'images/3d/3d4.jfif', 'images/3d/3d5.jfif'],
+  trad:      ['images/trad/trad1.jfif','images/trad/trad2.jfif','images/trad/trad3.jfif', 'images/trad/trad4.jfif', 'images/trad/trad5.jfif'],
+  photo:     ['images/photo/photo1.jpg','images/photo/photo2.jpg','images/photo/photo3.jpg', 'images/photo/photo4.jfif', 'images/photo/photo5.jfif','images/photo/photo6.jfif','images/photo/photo7.jfif','images/photo/photo8.jfif', 'images/photo/photo9.jfif'],
+  audio:     ['images/audio/audio1.mp4','images/audio/audio2.mp4','images/audio/audio3.mp4', 'images/audio/audio4.mp4']
+};
+
+
+const VIDEO_SRC = 'videos/video1.mp4';
+
+
+const DRAW_BOXES  = true;
+const DRAW_ARROWS = true;
+document.body.classList.toggle('no-box', !DRAW_BOXES);
+document.body.classList.toggle('draw-arrows', DRAW_ARROWS);
+
+/* ===== footer links: [link, center-left %, width %] and the row's top % ===== */
+const FOOTER = {
+  work:  { y:97.4, links:[
+    ['https://instagram.com/nuoyi.graphs',  18.1, 8.6],
+    ['https://instagram.com/freudiavis',    26.1, 6.8],
+    ['mailto:selenaco17@gmail.com',         49.6, 17.1],
+    ['tel:+639392812614',                   87.1, 14.5] ]},
+  about: { y:97.5, links:[
+    ['https://instagram.com/nuoyi.graphs',  40.2, 8.6],
+    ['https://instagram.com/freudiavis',    48.2, 6.8],
+    ['mailto:selenaco17@gmail.com',         66.1, 17.1],
+    ['tel:+639392812614',                   88.8, 14.5] ]}
+};
+document.querySelectorAll('[data-footer]').forEach(shot => {
+  const f = FOOTER[shot.dataset.footer];
+  f.links.forEach(([href, x, w]) => {
+    const a = document.createElement('a');
+    a.className = 'hit'; a.href = href;
+    a.setAttribute('aria-label', href.replace(/^(mailto:|tel:|https:\/\/)/, ''));
+    if (href.startsWith('http')) { a.target = '_blank'; a.rel = 'noopener'; }
+    a.style.cssText = `left:${x}%;top:${f.y}%;width:${w}%;height:3.5%`;
+    shot.appendChild(a);
+  });
+});
+
+if (location.search.includes('debug')) document.body.classList.add('debug');
+
+/* each page takes the exact shape of its OWN image, so everything lines up */
+document.querySelectorAll('.shot > img').forEach(img => {
+  const apply = () => {
+    if (!img.naturalWidth) return;
+    img.parentElement.style.setProperty('--ratio', img.naturalWidth / img.naturalHeight);
+    if (document.body.classList.contains('debug')) {      // shows each image's size
+      const tag = document.createElement('div');
+      tag.textContent = img.getAttribute('src') + '  ' + img.naturalWidth + '\u00d7' + img.naturalHeight;
+      tag.style.cssText = 'position:absolute;top:0;left:0;z-index:9;font:12px/1.4 monospace;background:#000c;color:#fff;padding:2px 8px';
+      img.parentElement.appendChild(tag);
+    }
+  };
+  img.complete ? apply() : img.addEventListener('load', apply);
+});
+
+const dlg = document.getElementById('all');
+const grid = document.getElementById('grid');
+
+const isVideo = u => /\.(mp4|webm|mov|m4v|ogv)(\?.*)?$/i.test(u);
+const isEmbed = u => /youtube\.com\/embed|player\.vimeo\.com/.test(u);
+
+/* picture, video file, or YouTube/Vimeo embed. lazy = load an embed only while it is showing */
+function tile(src, label, lazy = false){
+  let el;
+  if (isEmbed(src)) {
+    el = document.createElement('iframe');
+    el.title = label; el.allowFullscreen = true;
+    el.allow = 'accelerometer; encrypted-media; picture-in-picture';
+    el.dataset.src = src;
+    if (!lazy) el.src = src;
+    return el;
+  }
+  if (isVideo(src)) {
+    el = document.createElement('video');
+    el.src = src; el.controls = true; el.preload = 'metadata'; el.playsInline = true;
+  } else {
+    el = new Image(); el.src = src; el.alt = label;
+  }
+  el.onerror = () => {
+    const ph = document.createElement('div');
+    ph.className = 'ph'; ph.textContent = 'add ' + src;
+    el.replaceWith(ph);
+  };
+  return el;
+}
+
+/* an invisible button placed (in % of the page) over something drawn in the image */
+function hitAt(shot, pos, w, h, label, extra = ''){
+  const [x, y] = pos.split(',');
+  const b = document.createElement('button');
+  b.className = 'hit ' + extra;
+  b.setAttribute('aria-label', label);
+  b.style.cssText = `left:${x}%;top:${y}%;width:${w}%;` + (h ? `height:${h}%` : 'aspect-ratio:1');
+  shot.appendChild(b);
+  return b;
+}
+
+document.querySelectorAll('.gallery').forEach(g => {
+  const key = g.dataset.key, title = g.dataset.title;
+  const list = GALLERIES[key] || [];
+  const shot = g.parentElement;
+  g.style.left = g.dataset.x + '%';
+  g.style.top = g.dataset.y + '%';
+  g.innerHTML = `<h2 class="sr">${title}</h2>`;
+
+  const count = document.createElement('span'); count.className = 'count';
+  list.forEach((src, i) => {
+    const s = document.createElement('div');
+    s.className = 'slide' + (i === 0 ? ' on' : '');
+    s.appendChild(tile(src, title + ' ' + (i + 1), true));
+    g.appendChild(s);
+  });
+  g.appendChild(count);
+  const slides = [...g.querySelectorAll('.slide')];
+  let n = 0;
+  const show = i => {
+    if (!slides.length) return;
+    n = (i + slides.length) % slides.length;
+    slides.forEach((s, k) => {
+      s.classList.toggle('on', k === n);
+      const v = s.querySelector('video'); if (v && k !== n) v.pause();
+      const f = s.querySelector('iframe');
+      if (f) { if (k === n) { if (!f.getAttribute('src')) f.src = f.dataset.src; } else f.removeAttribute('src'); }
+    });
+    count.textContent = (n + 1) + ' / ' + slides.length;
+  };
+  show(0);
+
+  // invisible arrows over the arrows drawn in the image
+  const prev = hitAt(shot, g.dataset.prev, 3.3, null, 'Previous ' + title + ' picture', 'arrow prev');
+  const next = hitAt(shot, g.dataset.next, 3.3, null, 'Next ' + title + ' picture', 'arrow next');
+  prev.onclick = () => show(n - 1);
+  next.onclick = () => show(n + 1);
+  [prev, next].forEach(b => b.addEventListener('keydown', e => {
+    if (e.key === 'ArrowLeft') show(n - 1);
+    if (e.key === 'ArrowRight') show(n + 1);
+  }));
+
+  let x0 = null;                       // swipe on phones
+  g.addEventListener('touchstart', e => x0 = e.touches[0].clientX, {passive:true});
+  g.addEventListener('touchend', e => {
+    if (x0 === null) return;
+    const dx = e.changedTouches[0].clientX - x0;
+    if (Math.abs(dx) > 40) show(n + (dx < 0 ? 1 : -1));
+    x0 = null;
+  });
+
+  // invisible "See All" over the "See All" text drawn in the image
+  const see = hitAt(shot, g.dataset.see, 7.5, 4.4, 'See all ' + title);
+  see.onclick = () => {
+    document.getElementById('allTitle').textContent = title;
+    grid.replaceChildren(...list.map((src, i) => tile(src, title + ' ' + (i + 1))));
+    dlg.showModal();
+  };
+});
+
+/* page 8: video box */
+(function(){
+  const box = document.getElementById('video');
+  if (/youtube\.com\/embed|player\.vimeo\.com/.test(VIDEO_SRC)) {
+    box.innerHTML = `<iframe src="${VIDEO_SRC}" title="Video editing" allow="accelerometer; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+  } else {
+    const v = document.createElement('video');
+    v.controls = true; v.preload = 'metadata'; v.playsInline = true; v.src = VIDEO_SRC;
+    v.onerror = () => {
+      const ph = document.createElement('div');
+      ph.className = 'ph'; ph.textContent = 'add ' + VIDEO_SRC;
+      v.replaceWith(ph);
+    };
+    box.appendChild(v);
+  }
+})();
+
+document.getElementById('close').onclick = () => dlg.close();
+dlg.addEventListener('close', () => grid.replaceChildren());
+dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
+</script>
+</body>
+</html>
