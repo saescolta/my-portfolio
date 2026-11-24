@@ -18,15 +18,24 @@ body{font-family:var(--body);color:var(--ink);background:#fff}
 :focus-visible{outline:3px solid #e33;outline-offset:2px}
 
 /* ===== ALL 8 PAGES SHARE ONE SIZE ===== */
-.page{height:100vh;display:grid;place-items:center;background:#fff}
+.page{
+  width:100%;
+  min-height:100vh;
+  min-height:100svh;
+  display:grid;
+  place-items:center;
+  background:#fff;
+}
 .shot{
   position:relative;
-  width:min(100%, calc(100vh * var(--ratio)));
+  width:min(100vw, calc(100svh * var(--ratio)));
+  max-width:100%;
+  max-height:100svh;
   aspect-ratio:var(--ratio);
-  container-type:inline-size;      /* things inside scale with the page (cqw) */
+  container-type:inline-size;
   line-height:0;
 }
-.shot > img{display:block;width:100%;height:100%;object-fit:cover}
+.shot > img{display:block;width:100%;height:100%;object-fit:contain}
 
 /* invisible click areas placed over what is already drawn in your images */
 .hit{position:absolute;transform:translate(-50%,-50%);display:block;border:0;padding:0;
@@ -38,9 +47,11 @@ body{font-family:var(--body);color:var(--ink);background:#fff}
 /* ===== PICTURE BOXES (sit exactly on the boxes drawn in your templates) ===== */
 .gallery,.video{
   position:absolute;transform:translate(-50%,-50%);
-  width:38%;                       /* box width, % of the page */
-  aspect-ratio:981/784;            /* box shape */
-  border-radius:var(--box);overflow:hidden;line-height:1.4;
+  width:38%;
+  aspect-ratio:981/784;
+  border-radius:var(--box);
+  overflow:hidden;
+  line-height:1.4;
   background:var(--boxcolor);
 }
 .no-box .gallery,.no-box .video{background:none}   /* set DRAW_BOXES = false in the script to use this */
@@ -53,9 +64,24 @@ body{font-family:var(--body);color:var(--ink);background:#fff}
 .draw-arrows .arrow.prev::after{transform:translate(-25%,-50%) rotate(45deg)}
 .draw-arrows .arrow.next::after{border-width:.18cqw .18cqw 0 0;transform:translate(-75%,-50%) rotate(45deg)}
 .sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
-.slide{position:absolute;inset:1.2cqw;opacity:0;transition:opacity .35s;pointer-events:none}
+.slide{position:absolute;inset:1.2cqw;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .35s;pointer-events:none}
 .slide.on{opacity:1;pointer-events:auto}
-.slide img,.slide video,.slide iframe{width:100%;height:100%;object-fit:contain;display:block;border:0}   /* whole picture / video, never cropped */
+.slide img,.slide video{
+  display:block;
+  width:auto;
+  height:auto;
+  max-width:100%;
+  max-height:100%;
+  object-fit:contain;
+}
+.slide img{cursor:zoom-in}
+.slide iframe{
+  display:block;
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  border:0;
+}
 .slide video,.slide iframe{background:#000;border-radius:1cqw}
 .ph{width:100%;height:100%;display:grid;place-items:center;text-align:center;color:#56606e;
   font-size:max(.65rem,1cqw);padding:1rem}
@@ -65,13 +91,53 @@ body{font-family:var(--body);color:var(--ink);background:#fff}
 
 /* See All pop-up */
 .pill{font:500 .8rem var(--body);border:1px solid #bbb;background:#fff;border-radius:99px;padding:.45rem 1.1rem;cursor:pointer;color:var(--ink)}
-dialog{border:0;border-radius:14px;width:min(960px,94vw);max-height:90vh;padding:1.5rem;background:#fff;color:var(--ink)}
-dialog::backdrop{background:#000a}
+dialog{
+  border:1px solid rgba(255,255,255,.42);
+  border-radius:18px;
+  width:min(1100px,94vw);
+  max-height:88vh;
+  max-height:88svh;
+  padding:1.5rem;
+  margin:auto;
+  background:rgba(255,255,255,.20);
+  color:#fff;
+  box-shadow:0 16px 48px rgba(0,0,0,.28),inset 0 1px 0 rgba(255,255,255,.32);
+  -webkit-backdrop-filter:blur(18px);
+  backdrop-filter:blur(18px);
+}
+dialog::backdrop{background:rgba(0,0,0,.48);backdrop-filter:blur(5px)}
 dialog header{display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem}
+dialog h3{color:#fff}
+dialog .pill{background:rgba(255,255,255,.72);border-color:rgba(255,255,255,.65)}
+.grid img,.grid .ph{background:rgba(255,255,255,.18);cursor:zoom-in}
+.grid video,.grid iframe{cursor:default}
 dialog h3{font-size:1.4rem}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.8rem}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:.8rem;justify-items:stretch;align-items:center}
 .grid img,.grid .ph{aspect-ratio:1;width:100%;object-fit:contain;background:#f2f2f2;border-radius:8px}
 .grid video,.grid iframe{aspect-ratio:1;width:100%;border:0;border-radius:8px;background:#000;object-fit:contain}
+.photo-lightbox{
+  position:fixed;
+  width:min(94vw,1400px);
+  height:min(92svh,900px);
+  max-width:none;
+  max-height:none;
+  padding:3.5rem 1rem 1rem;
+  border:1px solid rgba(255,255,255,.45);
+  border-radius:18px;
+  background:rgba(20,20,24,.88);
+  -webkit-backdrop-filter:blur(18px);
+  backdrop-filter:blur(18px);
+  color:#fff;
+  overflow:hidden;
+}
+.photo-lightbox::backdrop{background:rgba(0,0,0,.78);backdrop-filter:blur(4px)}
+.photo-lightbox[open]{display:grid;place-items:center}
+.photo-lightbox img{width:100%;height:100%;object-fit:contain;min-height:0}
+.photo-close{position:absolute;top:.75rem;right:.75rem;z-index:2}
+@media (max-width:600px){
+  .page{min-height:100vh;min-height:100svh}
+  .shot{width:min(100vw,calc(100svh * var(--ratio)));max-height:100svh}
+}
 @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
 </style>
 </head>
@@ -154,12 +220,17 @@ dialog h3{font-size:1.4rem}
   <div class="grid" id="grid"></div>
 </dialog>
 
+<dialog id="photoLightbox" class="photo-lightbox" aria-label="Enlarged photo">
+  <button class="pill photo-close" id="photoClose" aria-label="Close enlarged photo">Close</button>
+  <img id="enlargedPhoto" alt="Enlarged portfolio photo">
+</dialog>
+
 <script>
 
 const GALLERIES = {
   posters:   ['images/posters/1.jpg','images/posters/2.jpg','images/posters/3_1.png', 'images/posters/4_1.png', 'images/posters/5_1.png', 'images/posters/6.jfif', 'images/posters/7.jfif', 'images/posters/8.jfif','images/posters/9.jfif','images/posters/10.jfif', 'images/posters/11.jfif', 'images/posters/12.jfif', 'images/posters/13.jfif'],
   editorial: ['images/editorial/editorial1.jfif','images/editorial/editorial2.jfif','images/editorial/editorial3.jfif', 'images/editorial/editorial4.jfif', 'images/editorial/editorial5.png'],
-  pubmats:   ['images/pubmats/pubmat1.jpg','images/pubmats/pubmat2.png','images/pubmats/pubmat3.jfif','images/pubmats/pubmat4.png', 'images/pubmats/pubmat5.png', 'images/pubmats/pubmat6.png','images/pubmats/pubmat7.png', 'images/pubmats/pubmat8.png', 'images/pubmats/pubmat9.png', 'images/pubmats/pubmat10.png', 'images/pubmats/pubmat11.png'],
+  pubmats:   ['images/pubmats/pubmat1.jpg','images/pubmats/pubmat2.png','images/pubmats/pubmat3.jfif','images/pubmats/pubmat4.png', 'images/pubmats/pubmat5.png', 'images/pubmats/pubmat6.png','images/pubmats/pubmat7.png', 'images/pubmats/pubmat8.png', 'images/pubmats/pubmat9.png', 'images/pubmats/pubmat10.png'],
   digital:   ['images/digital/digital1.jpg','images/digital/digital2.jpg','images/digital/digital3.jpg','images/digital/digital4.jpg', 'images/digital/digital5.jpg', 'images/digital/digital6.jpg', 'images/digital/digital7.jpg','images/digital/digital8.jpg','images/digital/digital9.jpg'],
   '3d':      ['images/3d/3d1.jfif','images/3d/3d2.jfif','images/3d/3d3.jfif', 'images/3d/3d4.jfif', 'images/3d/3d5.jfif'],
   trad:      ['images/trad/trad1.jfif','images/trad/trad2.jfif','images/trad/trad3.jfif', 'images/trad/trad4.jfif', 'images/trad/trad5.jfif'],
@@ -291,6 +362,16 @@ document.querySelectorAll('.gallery').forEach(g => {
   };
   show(0);
 
+  // Click the currently visible photo to open it in a large lightbox.
+  g.addEventListener('click', e => {
+    const photo = e.target.closest('.slide.on img');
+    if (!photo) return;
+    const enlarged = document.getElementById('enlargedPhoto');
+    enlarged.src = photo.currentSrc || photo.src;
+    enlarged.alt = photo.alt || title;
+    document.getElementById('photoLightbox').showModal();
+  });
+
   // invisible arrows over the arrows drawn in the image
   const prev = hitAt(shot, g.dataset.prev, 3.3, null, 'Previous ' + title + ' picture', 'arrow prev');
   const next = hitAt(shot, g.dataset.next, 3.3, null, 'Next ' + title + ' picture', 'arrow next');
@@ -338,6 +419,25 @@ document.querySelectorAll('.gallery').forEach(g => {
 
 document.getElementById('close').onclick = () => dlg.close();
 dlg.addEventListener('close', () => grid.replaceChildren());
+
+// Enlarge a poster/photo when it is clicked inside the See All window.
+grid.addEventListener('click', e => {
+  const photo = e.target.closest('img');
+  if (!photo) return;
+  const enlarged = document.getElementById('enlargedPhoto');
+  enlarged.src = photo.currentSrc || photo.src;
+  enlarged.alt = photo.alt || 'Portfolio artwork';
+  document.getElementById('photoLightbox').showModal();
+});
+
+const photoLightbox = document.getElementById('photoLightbox');
+document.getElementById('photoClose').onclick = () => photoLightbox.close();
+photoLightbox.addEventListener('click', e => {
+  if (e.target === photoLightbox) photoLightbox.close();
+});
+photoLightbox.addEventListener('close', () => {
+  document.getElementById('enlargedPhoto').removeAttribute('src');
+});
 dlg.addEventListener('click', e => { if (e.target === dlg) dlg.close(); });
 </script>
 </body>
